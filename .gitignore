@@ -1,2 +1,4 @@
 Ecommerce_Project/settings.py
 *.cfg
+db.sqlite3
+media

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.db.models.fields import AutoField, TextField
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 # Create your models here.
 
 
@@ -12,19 +13,22 @@ class CustomUser(AbstractUser):
 
 class AdminUser(models.Model):
     profile_pic = models.FileField(default="")
-    auth_user_id = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    auth_user_id = models.OneToOneField(
+        CustomUser, related_name="adminuser", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
 class StaffUser(models.Model):
     profile_pic = models.FileField(default="")
-    auth_user_id = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    auth_user_id = models.OneToOneField(
+        CustomUser, related_name="staffuser", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
 class MerchantUser(models.Model):
     profile_pic = models.FileField(default="")
-    auth_user_id = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    auth_user_id = models.OneToOneField(
+        CustomUser, related_name="merchantuser", on_delete=models.CASCADE)
     company_name = models.CharField(max_length=255)
     gst_details = models.CharField(max_length=255)
     address = models.TextField()
@@ -33,7 +37,8 @@ class MerchantUser(models.Model):
 
 class CustomerUser(models.Model):
     profile_pic = models.FileField(default="")
-    auth_user_id = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    auth_user_id = models.OneToOneField(
+        CustomUser, related_name="customeruser", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
@@ -43,7 +48,7 @@ class Categories(models.Model):
     url_slug = models.CharField(max_length=255)
     thumbnail = models.FileField()
     description = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=TextField)
+    created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.IntegerField(default=1)
 
 
@@ -54,7 +59,7 @@ class SubCategories(models.Model):
     url_slug = models.CharField(max_length=255)
     thumbnail = models.FileField()
     description = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=TextField)
+    created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.IntegerField(default=1)
 
 
@@ -63,7 +68,7 @@ class Products(models.Model):
     url_slug = models.CharField(max_length=255)
     subcategories_id = models.ForeignKey(
         SubCategories, on_delete=models.CASCADE)
-    product_name = models.CharField(max_length=True)
+    product_name = models.CharField(max_length=255)
     brand = models.CharField(max_length=255)
     product_max_price = models.CharField(max_length=255)
     product_discount_price = models.CharField(max_length=255)
@@ -137,7 +142,7 @@ class ProductReviews(models.Model):
     product_id = models.ForeignKey(Products, on_delete=models.CASCADE)
     user_id = models.ForeignKey(CustomerUser, on_delete=models.CASCADE)
     review_image = models.FileField()
-    rating = models.CharField(default="5")
+    rating = models.CharField(default="5", max_length=255)
     review = models.TextField(default="")
     created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.IntegerField(default=1)
@@ -183,3 +188,29 @@ class OrderDeliveryStatus(models.Model):
     status = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
+
+
+@receiver(post_save, sender=CustomUser)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        if instance.user_type == 1:
+            AdminUser.objects.create(auth_user_id=instance)
+        if instance.user_type == 2:
+            StaffUser.objects.create(auth_user_id=instance)
+        if instance.user_type == 3:
+            MerchantUser.objects.create(auth_user_id=instance,
+                                        company_name="", gst_details="", address="")
+        if instance.user_type == 4:
+            CustomerUser.objects.create(auth_user_id=instance)
+
+
+@receiver(post_save, sender=CustomUser)
+def save_user_profile(sender, instance, **kwargs):
+    if instance.user_type == 1:
+        instance.adminuser.save()
+    if instance.user_type == 2:
+        instance.staffuser.save()
+    if instance.user_type == 3:
+        instance.merchantuser.save()
+    if instance.user_type == 4:
+        instance.customeruser.save()
