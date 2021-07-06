@@ -1,0 +1,32 @@
+{% extends 'admin_template/base_template.html' %}
+{% block title %}
+  Category Create
+{% endblock title %}
+
+{% block page_title %}
+  Category Create
+{% endblock page_title %}
+
+{% block page_content %}
+<div class="row">
+    <div class="col-12 col-md-12 col-lg-12">
+        <div class="card">
+          <div class="card-header">
+            <h4>Categorys</h4>
+          </div>
+          <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                {% for fields in form %}
+                    <div class="form-group">
+                        <label>{{fields.label}}</label>
+                        <input type="{{fields.field.widget.input_type}}" name = "{{fields.name}}" class="form-control">
+                    </div>
+                {% endfor %}
+                <button type = "submit">Save Category</button>
+            </form>
+          </div>
+        </div>
+    </div>
+</div>
+
+{% endblock page_content %}

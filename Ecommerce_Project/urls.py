@@ -21,6 +21,13 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('demo/', views.demo_view, name="demo_view"),
-    path('demopage_template/', views.demopage_template)
+    path('admin_login/', views.admin_login_view, name="admin_login"),
+    path('admin_dashboard/', views.admin_dashboard_view, name="admin_dashboard"),
+    path('admin_login_process/', views.admin_login_process,
+         name="admin_login_process"),
+    path('admin_logout_process/', views.admin_logout_process,
+         name="admin_logout_process"),
+    path('category_list/', views.categories_list_view.as_view(), name="category_list"),
+    path('category_create/', views.category_create_view.as_view(),
+         name="category_create"),
 ]+static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

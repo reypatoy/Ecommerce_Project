@@ -1,0 +1,14 @@
+{% extends 'admin_template/base_template.html' %}
+{% block title %}
+  Category List
+{% endblock title %}
+
+{% block page_title %}
+  Category List
+{% endblock page_title %}
+
+{% block page_content %}
+{% for category in category_list %}
+<p>{{ catigory.title }}</p>
+{% endfor %} 
+{% endblock page_content %}
