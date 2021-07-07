@@ -1,10 +1,10 @@
 {% extends 'admin_template/base_template.html' %}
 {% block title %}
-  Category Create
+  Category Update
 {% endblock title %}
 
 {% block page_title %}
-  Category Create
+  Category Update
 {% endblock page_title %}
 
 {% block page_content %}
@@ -25,8 +25,18 @@
                             </div>
                         {% endif %}
                         <label>{{fields.label}}</label>
-                        <input type="{{fields.field.widget.input_type}}" id = "{{fields.name}}" name = "{{fields.name}}" class="form-control">
+                        <input value="{{fields.value}}" type="{{fields.field.widget.input_type}}" id = "{{fields.name}}" name = "{{fields.name}}" class="form-control">
                     </div>
+                    {% if fields.field.widget.input_type == "file" %}
+                        <div class="form-group">
+                            <label for="">Current thumbnail : {{fields.value}}</label><br>
+                            <div class="card">
+                                <div class="card-body">
+                                    <img class = "img-fluid" src="/media/{{fields.value}}" alt="">
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
                 {% endfor %}
                 <button class = "btn btn-primary btn-block" type = "submit">Save Category</button>
             </form>

@@ -1,0 +1,72 @@
+{% extends 'admin_template/base_template.html' %}
+{% block title %}
+  Sub Category Update
+{% endblock title %}
+
+{% block page_title %}
+  Sub Category Update
+{% endblock page_title %}
+
+{% block page_content %}
+<div class="row">
+    <div class="col-12 col-md-12 col-lg-12">
+        <div class="card">
+          <div class="card-header">
+            <h4>Sub Categories</h4>
+          </div>
+          <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for fields in form %}
+                    <div class="form-group"> 
+                        {% if fields.errors %}
+                            <div class="alert alert-danger">
+                                {{fields.errors}}
+                            </div>
+                        {% endif %}
+                        <label>{{fields.label}}</label>
+                        {% if fields.field.widget.input_type != "select" %}
+                            <input type="{{fields.field.widget.input_type}}" value = "{{fields.value}}" id = "{{fields.name}}" name = "{{fields.name}}" class="form-control">
+                        {% endif %}
+                        {% if fields.field.widget.input_type == "select" %}
+                            <select name="{{fields.name}}" id="{{fields.name}}">
+                                {% for id,value in fields.field.choices %}
+                                    <option value="{{id}}" {% if id == fields.value %}selected{% endif %}>{{value}}</option>
+                                {% endfor %}
+                            </select>
+                        {% endif %}
+                    </div>
+                    {% if fields.field.widget.input_type == "file" %}
+                        <div class="form-group">
+                            <label for="">Current thumbnail : {{fields.value}}</label><br>
+                            <div class="card">
+                                <div class="card-body">
+                                    <img class = "img-fluid" src="/media/{{fields.value}}" alt="">
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                <button class = "btn btn-primary btn-block" type = "submit">Save Sub Category</button>
+            </form>
+          </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.querySelector('#title').onkeyup=function(){
+        let title = document.querySelector('#title').value;
+        url = "";
+        for(i=0; i<title.length; i++){
+            if(title[i]==" "){
+                url+="-";
+            }
+            else{
+                url+=title[i];
+            }
+        }
+
+        document.querySelector('#url_slug').value=url.toLowerCase();
+    }
+</script>
+{% endblock page_content %}

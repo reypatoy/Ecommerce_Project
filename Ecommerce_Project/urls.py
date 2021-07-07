@@ -27,7 +27,17 @@ urlpatterns = [
          name="admin_login_process"),
     path('admin_logout_process/', views.admin_logout_process,
          name="admin_logout_process"),
+    # Categories
     path('category_list/', views.categories_list_view.as_view(), name="category_list"),
     path('category_create/', views.category_create_view.as_view(),
          name="category_create"),
+    path('category_update/<slug:pk>',
+         views.category_update_view.as_view(), name="category_update"),
+    # Subcategories
+    path('sub_category_list/', views.sub_categories_list_view.as_view(),
+         name="sub_category_list"),
+    path('sub_category_create/', views.sub_category_create_view.as_view(),
+         name="sub_category_create"),
+    path('sub_category_update/<slug:pk>',
+         views.sub_category_update_view.as_view(), name="sub_category_update"),
 ]+static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

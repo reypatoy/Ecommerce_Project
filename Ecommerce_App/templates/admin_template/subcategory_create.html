@@ -1,10 +1,10 @@
 {% extends 'admin_template/base_template.html' %}
 {% block title %}
-  Category Create
+  Sub Category Create
 {% endblock title %}
 
 {% block page_title %}
-  Category Create
+  Sub Category Create
 {% endblock page_title %}
 
 {% block page_content %}
@@ -12,7 +12,7 @@
     <div class="col-12 col-md-12 col-lg-12">
         <div class="card">
           <div class="card-header">
-            <h4>Categories</h4>
+            <h4>Sub Categories</h4>
           </div>
           <div class="card-body">
             <form method="POST" enctype="multipart/form-data">
@@ -25,10 +25,19 @@
                             </div>
                         {% endif %}
                         <label>{{fields.label}}</label>
-                        <input type="{{fields.field.widget.input_type}}" id = "{{fields.name}}" name = "{{fields.name}}" class="form-control">
+                        {% if fields.field.widget.input_type != "select" %}
+                            <input type="{{fields.field.widget.input_type}}" id = "{{fields.name}}" name = "{{fields.name}}" class="form-control">
+                        {% endif %}
+                        {% if fields.field.widget.input_type == "select" %}
+                            <select name="{{fields.name}}" id="{{fields.name}}">
+                                {% for id,value in fields.field.choices %}
+                                    <option value="{{id}}">{{value}}</option>
+                                {% endfor %}
+                            </select>
+                        {% endif %}
                     </div>
                 {% endfor %}
-                <button class = "btn btn-primary btn-block" type = "submit">Save Category</button>
+                <button class = "btn btn-primary btn-block" type = "submit">Save Sub Category</button>
             </form>
           </div>
         </div>
