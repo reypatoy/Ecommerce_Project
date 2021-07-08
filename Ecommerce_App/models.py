@@ -35,6 +35,9 @@ class MerchantUser(models.Model):
     address = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"{self.auth_user_id.first_name} {self.auth_user_id.last_name}"
+
 
 class CustomerUser(models.Model):
     profile_pic = models.FileField(default="")

@@ -22,7 +22,7 @@
           <div class="article-details">
             <p><span class="badge badge-secondary">{{subcategory.cathegory_id.title}}</span></p>
             <p>{{subcategory.description}}</p>
-            <p>Url slug: {{subcategory.url_slug}}</p>
+            <p><span class = "badge badge-primary">Url slug: {{subcategory.url_slug}}</span></p>
             <div class="article-cta">
                 <label class="custom-switch mt-2" style = "float:left">
                     <input type="checkbox" name="custom-switch-checkbox" class="custom-switch-input" {% if subcategory.is_active == 1 %} checked {% endif %} disabled>

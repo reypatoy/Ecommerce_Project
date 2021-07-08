@@ -1,0 +1,69 @@
+{% extends 'admin_template/base_template.html' %}
+{% block title %}
+  Merchant Create
+{% endblock title %}
+
+{% block page_title %}
+Merchant Create
+{% endblock page_title %}
+
+{% block page_content %}
+<div class="row">
+    <div class="col-12 col-md-12 col-lg-12">
+        <div class="card">
+          <div class="card-header">
+            <h4>Merchant</h4>
+          </div>
+          <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for fields in form %}
+                    <div class="form-group"> 
+                        {% if fields.errors %}
+                            <div class="alert alert-danger">
+                                {{fields.errors}}
+                            </div>
+                        {% endif %}
+                        <label>{{fields.label}}</label>
+                        <input type="{{fields.field.widget.input_type}}" id = "{{fields.name}}" name = "{{fields.name}}" class="form-control">
+                    </div>
+                {% endfor %}
+                <div class="form-group">
+                    <label>Profile Pic</label>
+                    <input type="file" id = "profile_pic" name = "profile_pic" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Company Name</label>
+                    <input type="text" id = "company_name" name = "company_name" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>GST</label>
+                    <input type="text" id = "gst_details" name = "gst_details" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <input type="text" id = "address" name = "address" class="form-control">
+                </div>
+                <button class = "btn btn-primary btn-block" type = "submit">Save Merchant</button>
+            </form>
+          </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.querySelector('#title').onkeyup=function(){
+        let title = document.querySelector('#title').value;
+        url = "";
+        for(i=0; i<title.length; i++){
+            if(title[i]==" "){
+                url+="-";
+            }
+            else{
+                url+=title[i];
+            }
+        }
+
+        document.querySelector('#url_slug').value=url.toLowerCase();
+    }
+</script>
+{% endblock page_content %}

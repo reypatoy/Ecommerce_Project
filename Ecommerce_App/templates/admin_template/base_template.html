@@ -98,6 +98,18 @@
                     <li class="{% if request.path == sub_category_create %} active {% endif %}"><a class="nav-link" href="{% url 'sub_category_create' %}">Add Sub Categories</a></li>
                   </ul>
                 </li>  
+                  <!--Merchant menu -->
+                  {% url 'merchant_create' as merchant_create %}
+                  {% url 'merchant_list' as merchant_list %}
+                  <!-- {% url 'sub_category_create' as sub_category_create %}
+                  {% url 'sub_category_create' as sub_category_create %} -->
+                  <li class="dropdown {% if request.path == merchant_list or request.path == merchant_create %} active {% endif %}">
+                    <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Merchants</span></a>
+                    <ul class="dropdown-menu">
+                      <li class="{% if request.path == merchant_list %} active {% endif %}"><a class="nav-link" href="{% url 'merchant_list' %}">Merchant List</a></li>
+                      <li class="{% if request.path == merchant_create %} active {% endif %}"><a class="nav-link" href="{% url 'merchant_create' %}">Add Merchant</a></li>
+                    </ul>
+                  </li>  
 
               </ul>
         

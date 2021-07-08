@@ -1,3 +1,4 @@
+from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
@@ -78,3 +79,70 @@ class sub_category_update_view(SuccessMessageMixin, UpdateView):
     success_message = "Sub Category Updated successfully!!!"
     fields = "__all__"
     template_name = "admin_template/subcategory_update.html"
+
+
+class merchant_user_create_view(SuccessMessageMixin, CreateView):
+    template_name = "admin_template/merchant_create.html"
+    model = models.CustomUser
+    fields = ["first_name", "last_name", "email", "username", "password"]
+
+    def form_valid(self, form):
+        # saving Custom user object for merchant user
+        user = form.save(commit=False)
+        user.is_active = True
+        user.user_type = 3
+        user.set_password(form.cleaned_data["password"])
+        user.save()
+
+        # saving merchant user
+        profile_pic = self.request.FILES["profile_pic"]
+        fs = FileSystemStorage()
+        filename = fs.save(profile_pic.name, profile_pic)
+        profile_pic_url = fs.url(filename)
+
+        user.merchantuser.profile_pic = profile_pic_url
+        user.merchantuser.company_name = self.request.POST.get("company_name")
+        user.merchantuser.gst_details = self.request.POST.get("gst_details")
+        user.merchantuser.address = self.request.POST.get("address")
+        user.save()
+        messages.success(self.request, "Merchant user Added successfully")
+        return HttpResponseRedirect(reverse("merchant_list"))
+
+
+class merchant_user_list_view(ListView):
+    model = models.MerchantUser
+    template_name = "admin_template/merchant_list.html"
+
+
+class merchant_user_update_view(SuccessMessageMixin, UpdateView):
+    model = models.CustomUser
+    template_name = "admin_template/merchant_update.html"
+    fields = ["first_name", "last_name", "email", "username", "password"]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        model = models.MerchantUser.objects.get(auth_user_id=self.object.pk)
+        context["merchantuser"] = model
+        return context
+
+    def form_valid(self, form):
+        # saving Custom user object for merchant user
+        user = form.save(commit=False)
+        user.set_password(form.cleaned_data["password"])
+        user.save()
+
+        # saving merchant user update
+        merchantuser = models.MerchantUser.objects.get(auth_user_id=user.id)
+        if self.request.FILES.get("profile_pic", False):
+            profile_pic = self.request.FILES["profile_pic"]
+            fs = FileSystemStorage()
+            filename = fs.save(profile_pic.name, profile_pic)
+            profile_pic_url = fs.url(filename)
+            merchantuser.profile_pic = profile_pic_url
+
+        merchantuser.company_name = self.request.POST.get("company_name")
+        merchantuser.gst_details = self.request.POST.get("gst_details")
+        merchantuser.address = self.request.POST.get("address")
+        merchantuser.save()
+        messages.success(self.request, "Merchant user updated successfully")
+        return HttpResponseRedirect(reverse("merchant_list"))

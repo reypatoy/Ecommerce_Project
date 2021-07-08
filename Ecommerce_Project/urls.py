@@ -40,4 +40,11 @@ urlpatterns = [
          name="sub_category_create"),
     path('sub_category_update/<slug:pk>',
          views.sub_category_update_view.as_view(), name="sub_category_update"),
+    # Merchants
+    path('merchant_create/', views.merchant_user_create_view.as_view(),
+         name="merchant_create"),
+    path('merchant_list/', views.merchant_user_list_view.as_view(),
+         name="merchant_list"),
+    path('merchant_update/<slug:pk>', views.merchant_user_update_view.as_view(),
+         name="merchant_update"),
 ]+static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
