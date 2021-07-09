@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView, CreateView, UpdateView, DetailView
 from . import models
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Q
 # Create your views here.
 
 
@@ -44,6 +45,24 @@ def admin_login_process(request):
 class categories_list_view(ListView):
     model = models.Categories
     template_name = "admin_template/category_list.html"
+    paginate_by = 4
+
+    def get_queryset(self):
+        filter_val = self.request.GET.get("filter", "")
+        order_by = self.request.GET.get("orderby", "id")
+        if filter_val != "":
+            cat = models.Categories.objects.filter(Q(title__contains=filter_val) | Q(
+                description__contains=filter_val)).order_by(order_by)
+        else:
+            cat = models.Categories.objects.all().order_by(order_by)
+        return cat
+
+    def get_context_data(self, **kwargs):
+        context = super(categories_list_view, self).get_context_data(**kwargs)
+        context["filter"] = self.request.GET.get("filter", "")
+        context["orderby"] = self.request.GET.get("orderby", "id")
+        context["all_table_fields"] = models.Categories._meta.get_fields()
+        return context
 
 
 class category_create_view(SuccessMessageMixin, CreateView):
