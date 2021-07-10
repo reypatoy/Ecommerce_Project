@@ -84,6 +84,25 @@ class category_update_view(SuccessMessageMixin, UpdateView):
 class sub_categories_list_view(ListView):
     model = models.SubCategories
     template_name = "admin_template/subcategory_list.html"
+    paginate_by = 4
+
+    def get_queryset(self):
+        filter_val = self.request.GET.get("filter", "")
+        order_by = self.request.GET.get("orderby", "id")
+        if filter_val != "":
+            cat = models.SubCategories.objects.filter(Q(title__contains=filter_val) | Q(
+                description__contains=filter_val)).order_by(order_by)
+        else:
+            cat = models.SubCategories.objects.all().order_by(order_by)
+        return cat
+
+    def get_context_data(self, **kwargs):
+        context = super(sub_categories_list_view,
+                        self).get_context_data(**kwargs)
+        context["filter"] = self.request.GET.get("filter", "")
+        context["orderby"] = self.request.GET.get("orderby", "id")
+        context["all_table_fields"] = models.SubCategories._meta.get_fields()
+        return context
 
 
 class sub_category_create_view(SuccessMessageMixin, CreateView):
